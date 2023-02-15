@@ -12,6 +12,8 @@ const Body = () => {
   const [sku, setSku] = useState("");
   const [item, setItem] = useState("");
   const [descripcion, setDescripcion] = useState("");
+  const [cantidad, setCantidad] = useState("");
+  const [location, setLocation] = useState("");
   const [captured, setCaptured] = useState(false);
 
   const toggleTab2 = () => {
@@ -43,6 +45,8 @@ const Body = () => {
       sku.trim() !== "" &&
       item.trim() !== "" &&
       descripcion.trim() !== "" &&
+      cantidad.trim() !== "" &&
+      location.trim() !== "" &&
       captured
     );
   };
@@ -57,6 +61,14 @@ const Body = () => {
 
   const handleDescripcionChange = (event) => {
     setDescripcion(event.target.value);
+  };
+
+  const handleCantidadChange = (event) => {
+    setCantidad(event.target.value);
+  };
+
+  const handleLocationChange = (event) => {
+    setLocation(event.target.value);
   };
 
   const [imgSrc, setImgSrc] = useState(null);
@@ -113,6 +125,8 @@ const Body = () => {
                 type="text"
                 placeholder="Cantidad en almacen"
                 className="textarea"
+                value={cantidad}
+                onChange={handleCantidadChange}
               />
             </Form.Group>
             <Form.Group>
@@ -122,6 +136,8 @@ const Body = () => {
                 type="text"
                 placeholder="Location Shelves"
                 className="textarea"
+                value={location}
+                onChange={handleLocationChange}
               />
             </Form.Group>
           </Form>
