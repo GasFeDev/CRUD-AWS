@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
 import Webcam from "react-webcam";
 import Listar from "../Listar/Listar";
@@ -6,8 +6,8 @@ import Listar from "../Listar/Listar";
 const Body = () => {
   const [showTab2, setShowTab2] = useState(false);
   const [showListar, setShowListar] = useState(false);
-  const webcamRef = useRef(null);
-  const imgRef = useRef(null);
+  const [capturedImage, setCapturedImage] = useState(null);
+  const webcamRef = React.useRef(null);
 
   const toggleTab2 = () => {
     setShowTab2(true);
@@ -23,9 +23,9 @@ const Body = () => {
     setShowListar(!showListar);
   };
 
-  const handleCapture = () => {
+  const takePicture = () => {
     const imageSrc = webcamRef.current.getScreenshot();
-    imgRef.current.src = imageSrc;
+    setCapturedImage(imageSrc);
   };
 
   return (
@@ -46,17 +46,38 @@ const Body = () => {
         <Listar />
       ) : showTab2 ? (
         <Form className="mt-5">
-          <Webcam audio={false} ref={webcamRef} screenshotFormat="image/png" />
+          <Webcam audio={false} ref={webcamRef} screenshotFormat="image/jpeg" />
+          <Button variant="primary" size="lg" onClick={takePicture}>
+            Tomar foto
+          </Button>
+          {capturedImage && (
+            <img
+              src={capturedImage}
+              alt="captured"
+              style={{ marginTop: "10px" }}
+            />
+          )}
+          <Form.Group>
+            <Form.Control
+              as="textarea"
+              rows={3}
+              type="text"
+              placeholder="Cantidad en almacen"
+            />
+          </Form.Group>
+          <Form.Group>
+            <Form.Control
+              as="textarea"
+              rows={3}
+              type="text"
+              placeholder="Location Shelves"
+            />
+          </Form.Group>
           <Row style={{ marginTop: "50px" }}>
             <Col xs={12} md={12}>
-              <Button variant="primary" size="lg" onClick={handleCapture}>
-                Tomar foto
+              <Button variant="primary" size="lg">
+                Guardar
               </Button>
-            </Col>
-          </Row>
-          <Row style={{ marginTop: "50px" }}>
-            <Col>
-              <img ref={imgRef} alt="" />
             </Col>
           </Row>
         </Form>
