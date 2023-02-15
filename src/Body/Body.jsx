@@ -9,6 +9,10 @@ const Body = () => {
   const [showListar, setShowListar] = useState(false);
   const [capturing, setCapturing] = useState(false);
   const webcamRef = React.useRef(null);
+  const [sku, setSku] = useState("");
+  const [item, setItem] = useState("");
+  const [descripcion, setDescripcion] = useState("");
+  const [captured, setCaptured] = useState(false);
 
   const toggleTab2 = () => {
     setShowTab2(true);
@@ -31,7 +35,29 @@ const Body = () => {
     setShowListar(false);
     setShowTab2(true);
     setImgSrc(imageSrc);
+    setCaptured(true);
   }, [webcamRef]);
+
+  const canSave = () => {
+    return (
+      sku.trim() !== "" &&
+      item.trim() !== "" &&
+      descripcion.trim() !== "" &&
+      captured
+    );
+  };
+
+  const handleSkuChange = (event) => {
+    setSku(event.target.value);
+  };
+
+  const handleItemChange = (event) => {
+    setItem(event.target.value);
+  };
+
+  const handleDescripcionChange = (event) => {
+    setDescripcion(event.target.value);
+  };
 
   const [imgSrc, setImgSrc] = useState(null);
 
@@ -83,17 +109,19 @@ const Body = () => {
             <Form.Group>
               <Form.Control
                 as="textarea"
-                rows={3}
+                rows={2}
                 type="text"
                 placeholder="Cantidad en almacen"
+                className="textarea"
               />
             </Form.Group>
             <Form.Group>
               <Form.Control
                 as="textarea"
-                rows={3}
+                rows={2}
                 type="text"
                 placeholder="Location Shelves"
+                className="textarea"
               />
             </Form.Group>
           </Form>
@@ -101,17 +129,39 @@ const Body = () => {
       ) : (
         <Form className="mt-5">
           <Form.Group>
-            <Form.Control as="textarea" rows={3} placeholder="SKU" />
+            <Form.Control
+              as="textarea"
+              rows={3}
+              placeholder="SKU"
+              className="textarea"
+              value={sku}
+              onChange={handleSkuChange}
+            />
           </Form.Group>
           <Form.Group>
-            <Form.Control as="textarea" rows={3} placeholder="Item" />
+            <Form.Control
+              as="textarea"
+              rows={3}
+              placeholder="Item"
+              className="textarea"
+              value={item}
+              onChange={handleItemChange}
+            />
           </Form.Group>
           <Form.Group>
-            <Form.Control as="textarea" rows={3} placeholder="Descripción" />
+            <Form.Control
+              as="textarea"
+              rows={3}
+              placeholder="Descripción"
+              className="textarea"
+              value={descripcion}
+              onChange={handleDescripcionChange}
+            />
           </Form.Group>
+
           <Row style={{ marginTop: "50px" }}>
             <Col xs={12} md={12}>
-              <Button variant="primary" size="lg">
+              <Button variant="primary" size="lg" disabled={!canSave()}>
                 Guardar
               </Button>
             </Col>
