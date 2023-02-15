@@ -53,31 +53,6 @@ const Body = () => {
         <Listar />
       ) : showTab2 ? (
         <div>
-          <Form className="mt-5">
-            <Form.Group>
-              <Form.Control
-                as="textarea"
-                rows={3}
-                type="text"
-                placeholder="Cantidad en almacen"
-              />
-            </Form.Group>
-            <Form.Group>
-              <Form.Control
-                as="textarea"
-                rows={3}
-                type="text"
-                placeholder="Location Shelves"
-              />
-            </Form.Group>
-            <Row style={{ marginTop: "50px" }}>
-              <Col xs={12} md={12}>
-                <Button variant="primary" size="lg">
-                  Guardar
-                </Button>
-              </Col>
-            </Row>
-          </Form>
           <div style={{ marginTop: "50px" }}>
             {imgSrc ? (
               <img src={imgSrc} alt="captured" />
@@ -104,6 +79,24 @@ const Body = () => {
               </>
             )}
           </div>
+          <Form className="mt-5">
+            <Form.Group>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                type="text"
+                placeholder="Cantidad en almacen"
+              />
+            </Form.Group>
+            <Form.Group>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                type="text"
+                placeholder="Location Shelves"
+              />
+            </Form.Group>
+          </Form>
         </div>
       ) : (
         <Form className="mt-5">
