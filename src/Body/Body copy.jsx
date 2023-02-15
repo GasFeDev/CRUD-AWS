@@ -6,33 +6,35 @@ import Listar from "../Listar/Listar";
 const Body = () => {
   const [showTab2, setShowTab2] = useState(false);
   const [showListar, setShowListar] = useState(false);
-  const [capturing, setCapturing] = useState(false);
-  const webcamRef = React.useRef(null);
+  const [accessingCamera, setAccessingCamera] = useState(false);
+  const [imageSrc, setImageSrc] = useState(null);
+
+  const videoConstraints = {
+    facingMode: "environment",
+  };
 
   const toggleTab2 = () => {
     setShowTab2(true);
-    setShowListar(false);
+    setShowListar(false); // se oculta el componente Listar si se estaba mostrando
   };
 
   const toggleTab1 = () => {
     setShowTab2(false);
-    setShowListar(false);
+    setShowListar(false); // se oculta el componente Listar si se estaba mostrando
   };
 
   const toggleListar = () => {
     setShowListar(!showListar);
   };
 
-  const capture = React.useCallback(() => {
-    setCapturing(true);
+  const handleTakePhoto = () => {
+    setAccessingCamera(true);
     const imageSrc = webcamRef.current.getScreenshot();
-    setCapturing(false);
-    setShowListar(false);
-    setShowTab2(true);
-    setImgSrc(imageSrc);
-  }, [webcamRef]);
+    setAccessingCamera(false);
+    setImageSrc(imageSrc);
+  };
 
-  const [imgSrc, setImgSrc] = useState(null);
+  const webcamRef = React.useRef(null);
 
   return (
     <Container className="mt-5">
@@ -51,60 +53,39 @@ const Body = () => {
       {showListar ? (
         <Listar />
       ) : showTab2 ? (
-        <div>
-          <Form className="mt-5">
-            <Form.Group>
-              <Form.Control
-                as="textarea"
-                rows={3}
-                type="text"
-                placeholder="Cantidad en almacen"
-              />
-            </Form.Group>
-            <Form.Group>
-              <Form.Control
-                as="textarea"
-                rows={3}
-                type="text"
-                placeholder="Location Shelves"
-              />
-            </Form.Group>
+        <Form className="mt-5">
+          <Form.Group>
+            <Webcam
+              audio={false}
+              height={"100%"}
+              ref={webcamRef}
+              screenshotFormat="image/jpeg"
+              width={"100%"}
+              videoConstraints={videoConstraints}
+            />
+          </Form.Group>
+          <Row style={{ marginTop: "50px" }}>
+            <Col xs={12} md={12}>
+              <Button variant="primary" size="lg" onClick={handleTakePhoto}>
+                Tomar foto
+              </Button>
+            </Col>
+          </Row>
+          {accessingCamera && (
             <Row style={{ marginTop: "50px" }}>
               <Col xs={12} md={12}>
-                <Button variant="primary" size="lg">
-                  Guardar
-                </Button>
+                <Spinner animation="border" variant="primary" />
               </Col>
             </Row>
-          </Form>
-          <div style={{ marginTop: "50px" }}>
-            {imgSrc ? (
-              <img src={imgSrc} alt="captured" />
-            ) : (
-              <>
-                {capturing ? (
-                  <Spinner animation="border" role="status" />
-                ) : (
-                  <div>
-                    <Webcam
-                      audio={false}
-                      height={480}
-                      ref={webcamRef}
-                      screenshotFormat="image/jpeg"
-                      width={640}
-                      videoConstraints={{
-                        facingMode: "user",
-                      }}
-                    />
-                    <Button variant="primary" onClick={capture}>
-                      Tomar foto
-                    </Button>
-                  </div>
-                )}
-              </>
-            )}
-          </div>
-        </div>
+          )}
+          {imageSrc && (
+            <Row style={{ marginTop: "50px" }}>
+              <Col xs={12} md={12}>
+                <img src={imageSrc} alt="captured" />
+              </Col>
+            </Row>
+          )}
+        </Form>
       ) : (
         <Form className="mt-5">
           <Form.Group>
