@@ -1,11 +1,10 @@
 import "./App.css";
-import Body from "./Body/Body";
-import Navb from "./Navbar/Navbar";
+import { Body, Navbar } from "./cargaInicial";
 
 function App() {
   return (
     <div className="App">
-      <Navb />
+      <Navbar />
       <Body />
     </div>
   );
