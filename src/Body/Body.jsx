@@ -92,9 +92,11 @@ const Body = () => {
                         audio={false}
                         ref={webcamRef}
                         screenshotFormat="image/jpeg"
+                        videoConstraints={{
+                          facingMode: "user",
+                        }}
                       />
                     </div>
-
                     <Button variant="primary" onClick={capture}>
                       Tomar foto
                     </Button>
