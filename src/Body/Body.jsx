@@ -93,7 +93,7 @@ const Body = () => {
                       ref={webcamRef}
                       screenshotFormat="image/jpeg"
                       videoConstraints={{
-                        facingMode: "user",
+                        facingMode: "environment",
                       }}
                     />
                     <Button variant="primary" onClick={capture}>

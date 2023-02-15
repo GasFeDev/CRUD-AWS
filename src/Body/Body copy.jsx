@@ -10,7 +10,7 @@ const Body = () => {
   const [imageSrc, setImageSrc] = useState(null);
 
   const videoConstraints = {
-    facingMode: "environment",
+    facingMode: "user",
   };
 
   const toggleTab2 = () => {
