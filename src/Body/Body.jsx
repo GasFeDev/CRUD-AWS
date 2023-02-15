@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
-import Webcam from "react-webcam"; // Importamos el componente de "react-webcam"
+import Webcam from "react-webcam";
 import Listar from "../Listar/Listar";
 
 const Body = () => {
   const [showTab2, setShowTab2] = useState(false);
   const [showListar, setShowListar] = useState(false);
+  const webcamRef = useRef(null);
+  const imgRef = useRef(null);
 
   const toggleTab2 = () => {
     setShowTab2(true);
@@ -21,15 +23,10 @@ const Body = () => {
     setShowListar(!showListar);
   };
 
-  // Agregamos una función para guardar la foto tomada por la cámara
-  const capture = (event) => {
-    event.preventDefault();
+  const handleCapture = () => {
     const imageSrc = webcamRef.current.getScreenshot();
-    console.log(imageSrc);
+    imgRef.current.src = imageSrc;
   };
-
-  // Creamos una referencia para el componente de "react-webcam"
-  const webcamRef = React.useRef(null);
 
   return (
     <Container className="mt-5">
@@ -49,35 +46,17 @@ const Body = () => {
         <Listar />
       ) : showTab2 ? (
         <Form className="mt-5">
-          {/* Reemplazamos el campo de carga de archivos por el componente de "react-webcam" */}
-          <Webcam
-            audio={false}
-            ref={webcamRef}
-            screenshotFormat="image/jpeg"
-            width="100%"
-          />
-          <Form.Group>
-            <Form.Control
-              as="textarea"
-              rows={3}
-              type="text"
-              placeholder="Cantidad en almacen"
-            />
-          </Form.Group>
-          <Form.Group>
-            <Form.Control
-              as="textarea"
-              rows={3}
-              type="text"
-              placeholder="Location Shelves"
-            />
-          </Form.Group>
+          <Webcam audio={false} ref={webcamRef} screenshotFormat="image/png" />
           <Row style={{ marginTop: "50px" }}>
             <Col xs={12} md={12}>
-              {/* Cambiamos el evento "onChange" por "onClick" para capturar la foto tomada */}
-              <Button variant="primary" size="lg" onClick={capture}>
+              <Button variant="primary" size="lg" onClick={handleCapture}>
                 Tomar foto
               </Button>
+            </Col>
+          </Row>
+          <Row style={{ marginTop: "50px" }}>
+            <Col>
+              <img ref={imgRef} alt="" />
             </Col>
           </Row>
         </Form>
