@@ -9,12 +9,15 @@ const Body = () => {
   const [showListar, setShowListar] = useState(false);
   const [capturing, setCapturing] = useState(false);
   const webcamRef = React.useRef(null);
-  const [sku, setSku] = useState("");
-  const [item, setItem] = useState("");
-  const [descripcion, setDescripcion] = useState("");
-  const [cantidad, setCantidad] = useState("");
-  const [location, setLocation] = useState("");
+  const [Sku, setSku] = useState("");
+  const [Item, setItem] = useState("");
+  const [Descripcion, setDescripcion] = useState("");
+  const [Cantidad, setCantidad] = useState("");
+  const [Ubicacion, setUbicacion] = useState("");
   const [captured, setCaptured] = useState(false);
+  const [imgSrc, setImgSrc] = useState(null);
+
+  const [, setResponseText] = useState("");
 
   const toggleTab2 = () => {
     setShowTab2(true);
@@ -42,11 +45,11 @@ const Body = () => {
 
   const canSave = () => {
     return (
-      sku.trim() !== "" &&
-      item.trim() !== "" &&
-      descripcion.trim() !== "" &&
-      cantidad.trim() !== "" &&
-      location.trim() !== "" &&
+      Sku.trim() !== "" &&
+      Item.trim() !== "" &&
+      Descripcion.trim() !== "" &&
+      Cantidad.trim() !== "" &&
+      Ubicacion.trim() !== "" &&
       captured
     );
   };
@@ -67,11 +70,35 @@ const Body = () => {
     setCantidad(event.target.value);
   };
 
-  const handleLocationChange = (event) => {
-    setLocation(event.target.value);
+  const handleUbicacionChange = (event) => {
+    setUbicacion(event.target.value);
   };
 
-  const [imgSrc, setImgSrc] = useState(null);
+  async function submitMessage(event) {
+    event.preventDefault();
+    try {
+      const response = await fetch(
+        "https://528676oyjb.execute-api.us-east-1.amazonaws.com/prod/sku",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            Cantidad: Cantidad,
+            Descripcion: Descripcion,
+            Item: Item,
+            Sku: Sku,
+            Ubicacion: Ubicacion,
+            Foto: imgSrc,
+          }),
+        }
+      );
+      const data = await response.json();
+      const text = JSON.stringify(data);
+      setResponseText(text);
+      console.log(text);
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   return (
     <Container className="mt-5">
@@ -117,7 +144,7 @@ const Body = () => {
               </>
             )}
           </div>
-          <Form className="mt-5">
+          <Form className="mt-5" onSubmit={submitMessage}>
             <Form.Group>
               <Form.Control
                 as="textarea"
@@ -125,7 +152,8 @@ const Body = () => {
                 type="text"
                 placeholder="Cantidad en almacen"
                 className="textarea"
-                value={cantidad}
+                id="Cantidad"
+                value={Cantidad}
                 onChange={handleCantidadChange}
               />
             </Form.Group>
@@ -134,23 +162,25 @@ const Body = () => {
                 as="textarea"
                 rows={2}
                 type="text"
-                placeholder="Location Shelves"
+                placeholder="Ubicación"
                 className="textarea"
-                value={location}
-                onChange={handleLocationChange}
+                id="Ubicacion"
+                value={Ubicacion}
+                onChange={handleUbicacionChange}
               />
             </Form.Group>
           </Form>
         </div>
       ) : (
-        <Form className="mt-5">
+        <Form className="mt-5" onSubmit={submitMessage}>
           <Form.Group>
             <Form.Control
               as="textarea"
               rows={3}
-              placeholder="SKU"
+              placeholder="Código"
               className="textarea"
-              value={sku}
+              id="Sku"
+              value={Sku}
               onChange={handleSkuChange}
             />
           </Form.Group>
@@ -158,9 +188,10 @@ const Body = () => {
             <Form.Control
               as="textarea"
               rows={3}
-              placeholder="Item"
+              placeholder="Nombre Item"
               className="textarea"
-              value={item}
+              id="Item"
+              value={Item}
               onChange={handleItemChange}
             />
           </Form.Group>
@@ -170,14 +201,20 @@ const Body = () => {
               rows={3}
               placeholder="Descripción"
               className="textarea"
-              value={descripcion}
+              id="Descripcion"
+              value={Descripcion}
               onChange={handleDescripcionChange}
             />
           </Form.Group>
-
           <Row style={{ marginTop: "50px" }}>
             <Col xs={12} md={12}>
-              <Button variant="primary" size="lg" disabled={!canSave()}>
+              <Button
+                variant="primary"
+                size="lg"
+                disabled={!canSave()}
+                type="submit"
+                value="Submit"
+              >
                 Guardar
               </Button>
             </Col>
@@ -191,11 +228,6 @@ const Body = () => {
             <Col>
               <Button variant="outline-secondary" onClick={toggleListar}>
                 Editar
-              </Button>
-            </Col>
-            <Col>
-              <Button variant="outline-danger" onClick={toggleListar}>
-                Eliminar
               </Button>
             </Col>
           </Row>
