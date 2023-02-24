@@ -10,7 +10,7 @@ const Body = () => {
   const [capturing, setCapturing] = useState(false);
   const webcamRef = React.useRef(null);
   const [Sku, setSku] = useState("");
-  const [Item, setItem] = useState("");
+  const [Nombre, setNombre] = useState("");
   const [Descripcion, setDescripcion] = useState("");
   const [Cantidad, setCantidad] = useState("");
   const [Ubicacion, setUbicacion] = useState("");
@@ -46,7 +46,7 @@ const Body = () => {
   const canSave = () => {
     return (
       Sku.trim() !== "" &&
-      Item.trim() !== "" &&
+      Nombre.trim() !== "" &&
       Descripcion.trim() !== "" &&
       Cantidad.trim() !== "" &&
       Ubicacion.trim() !== "" &&
@@ -58,8 +58,8 @@ const Body = () => {
     setSku(event.target.value);
   };
 
-  const handleItemChange = (event) => {
-    setItem(event.target.value);
+  const handleNombreChange = (event) => {
+    setNombre(event.target.value);
   };
 
   const handleDescripcionChange = (event) => {
@@ -84,7 +84,7 @@ const Body = () => {
           body: JSON.stringify({
             Cantidad: Cantidad,
             Descripcion: Descripcion,
-            Item: Item,
+            Nombre: Nombre,
             Sku: Sku,
             Ubicacion: Ubicacion,
             Foto: imgSrc,
@@ -190,9 +190,9 @@ const Body = () => {
               rows={3}
               placeholder="Nombre Item"
               className="textarea"
-              id="Item"
-              value={Item}
-              onChange={handleItemChange}
+              id="Nombre"
+              value={Nombre}
+              onChange={handleNombreChange}
             />
           </Form.Group>
           <Form.Group>

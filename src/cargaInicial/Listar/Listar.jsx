@@ -3,9 +3,18 @@ import { Container, Row, Col, Button, Form, Table } from "react-bootstrap";
 import "./Listar.css";
 
 const Listar = () => {
+  const [Sku] = useState("");
+  const [Nombre] = useState("");
+  const [Descripcion] = useState("");
+  const [Cantidad] = useState("");
+  const [Ubicacion] = useState("");
+  const [id, setId] = useState(null);
   const [showTable, setShowTable] = useState(false);
   const [tableData, setTableData] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
+  const [hiddenRows] = useState(
+    JSON.parse(localStorage.getItem("hiddenRows")) || []
+  );
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -21,7 +30,13 @@ const Listar = () => {
           .then((response) => response.json())
           .then((data) => {
             console.log(data.body);
-            setTableData(data.body);
+            const tableDataWithId = data.body
+              .filter((item) => item["Eliminado"] !== true)
+              .map((item) => ({
+                ...item,
+                id: item["ID Interno"],
+              }));
+            setTableData(tableDataWithId);
             setShowTable(true);
           });
         console.log(response);
@@ -34,42 +49,139 @@ const Listar = () => {
     getSkus();
   }, []);
 
+  useEffect(() => {
+    localStorage.setItem("hiddenRows", JSON.stringify(hiddenRows));
+  }, [hiddenRows]);
+
   const handleCheckboxChange = (event, row) => {
     const checked = event.target.checked;
     if (checked) {
-      setSelectedRows([...selectedRows, row]);
+      setSelectedRows([row]);
+      setId(row["ID Interno"]);
     } else {
-      setSelectedRows(
-        selectedRows.filter((selectedRow) => selectedRow.id !== row.id)
-      );
+      setSelectedRows([]);
+      setId(null);
     }
   };
 
-  const handleEditClick = () => {
-    if (selectedRows.length === 1) {
-      const row = selectedRows[0];
-      const newName = prompt("Introduzca el nuevo nombre:", row.name);
-      const newQuantity = prompt("Introduzca la nueva cantidad:", row.quantity);
-      if (newName !== null && newQuantity !== null) {
-        setTableData(
-          tableData.map((tableRow) => {
-            if (tableRow.id === row.id) {
-              return { ...tableRow, name: newName, quantity: newQuantity };
-            } else {
-              return tableRow;
-            }
-          })
-        );
+  async function handleEditClick(event) {
+    event.preventDefault();
+    if (!id) {
+      alert("Debe seleccionar una fila para editar.");
+      return;
+    }
+    try {
+      const updatedProduct = {};
+
+      let newSku = prompt("Introduce el nuevo valor para el SKU:", Sku);
+      if (newSku !== null) {
+        updatedProduct.Sku = newSku;
+      } else {
+        return;
       }
-    }
-    setSelectedRows([]);
-  };
 
-  const handleDeleteClick = () => {
-    setTableData(tableData.filter((row) => !selectedRows.includes(row)));
-    setSelectedRows([]);
-  };
-  console.log(tableData);
+      let newNombre = prompt(
+        "Introduce el nuevo valor para el nombre:",
+        Nombre
+      );
+      if (newNombre !== null) {
+        updatedProduct.Nombre = newNombre;
+      } else {
+        return;
+      }
+
+      let newDescripcion = prompt(
+        "Introduce el nuevo valor para la descripción:",
+        Descripcion
+      );
+      if (newDescripcion !== null) {
+        updatedProduct.Descripcion = newDescripcion;
+      } else {
+        return;
+      }
+
+      let newCantidad = prompt(
+        "Introduce el nuevo valor para la cantidad:",
+        Cantidad
+      );
+      if (newCantidad !== null) {
+        updatedProduct.Cantidad = newCantidad;
+      } else {
+        return;
+      }
+
+      let newUbicacion = prompt(
+        "Introduce el nuevo valor para la ubicación:",
+        Ubicacion
+      );
+      if (newUbicacion !== null) {
+        updatedProduct.Ubicacion = newUbicacion;
+      } else {
+        return;
+      }
+
+      updatedProduct["ID Interno"] = id;
+
+      const response = await fetch(
+        "https://528676oyjb.execute-api.us-east-1.amazonaws.com/prod/sku",
+        {
+          method: "PUT",
+          body: JSON.stringify(updatedProduct),
+        }
+      );
+      const data = await response.json();
+      console.log(data);
+
+      setTableData(
+        tableData.map((item) => {
+          if (item.id === id) {
+            return {
+              ...item,
+              Sku: newSku,
+              Nombre: newNombre,
+              Descripcion: newDescripcion,
+              Cantidad: newCantidad,
+              Ubicacion: newUbicacion,
+            };
+          }
+          return item;
+        })
+      );
+      setSelectedRows([]);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function handleDeleteClick(event) {
+    event.preventDefault();
+    if (!id) {
+      alert("Debe seleccionar una fila para eliminar.");
+      return;
+    }
+    const confirmed = window.confirm(
+      "¿Está seguro de que desea eliminar el producto seleccionado?"
+    );
+    if (confirmed) {
+      const updatedTableData = tableData.filter((item) => item.id !== id);
+      setTableData(updatedTableData);
+    }
+    try {
+      const response = await fetch(
+        "https://9yst2eottc.execute-api.us-east-1.amazonaws.com/test",
+        {
+          method: "PUT",
+          body: JSON.stringify({ "ID Interno": id, Eliminado: true }),
+        }
+      );
+      const data = await response.json();
+      console.log(data);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  const filteredData = tableData.filter((row) => !hiddenRows.includes(row));
 
   return (
     <Container fluid>
@@ -91,15 +203,15 @@ const Listar = () => {
                     <th>Cantidad</th>
                     <th>Descripcion</th>
                     <th>Foto</th>
-                    <th>Item</th>
+                    <th>Nombre</th>
                     <th>Sku</th>
                     <th>Ubicacion</th>
                     <th>Seleccionar</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {Array.isArray(tableData) &&
-                    tableData.map((row) => (
+                  {Array.isArray(filteredData) &&
+                    filteredData.map((row) => (
                       <tr key={row.id}>
                         <td>{row["Cantidad"]}</td>
                         <td>{row["Descripcion"]}</td>
@@ -121,7 +233,7 @@ const Listar = () => {
                             </>
                           )}
                         </td>
-                        <td>{row["Item"]}</td>
+                        <td>{row["Nombre"]}</td>
                         <td>{row["Sku"]}</td>
                         <td>{row["Ubicacion"]}</td>
                         <td>
