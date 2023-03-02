@@ -220,7 +220,7 @@ const Listar = () => {
                         <th>Descripcion</th>
                         <th>Cantidad</th>
                         <th>Ubicacion</th>
-                        <th>Foto</th>
+                        <th className="encabezados">Foto</th>
                       </>
                     )}
                     <th>Seleccionar</th>
@@ -302,12 +302,7 @@ const Listar = () => {
                                 <img
                                   src={row["Foto"]}
                                   alt="Imagen de producto"
-                                  style={{
-                                    width: "30%",
-                                    height: "auto",
-                                    maxWidth: "200px",
-                                    margin: "0px",
-                                  }}
+                                  className="foto"
                                   onClick={() =>
                                     navigator.clipboard.writeText(row["Foto"])
                                   }

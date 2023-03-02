@@ -19,12 +19,20 @@ const Body = () => {
 
   const [, setResponseText] = useState("");
   const [showConfirmationMessage, setShowConfirmationMessage] = useState(false);
+  const [confirmationMessage, setConfirmationMessage] = useState(false);
+  const [submitError, setSubmitError] = useState(false);
 
   const handleSaveData = () => {
     // Verificar si los datos se han guardado correctamente
     if (Cantidad.trim() !== "" && Ubicacion.trim() !== "" && captured) {
       // Mostrar el mensaje de confirmación
       setShowConfirmationMessage(true);
+    }
+    if (canSave()) {
+      submitMessage();
+    }
+    if (confirmationMessage) {
+      alert("Su producto ha sido guardado correctamente");
     }
   };
 
@@ -123,8 +131,10 @@ const Body = () => {
       const text = JSON.stringify(data);
       setResponseText(text);
       setShowConfirmationMessage(false); // Ocultar el mensaje de confirmación
+      setConfirmationMessage(true);
       console.log(text);
     } catch (error) {
+      setSubmitError(true);
       console.error(error);
     }
   }
@@ -270,6 +280,11 @@ const Body = () => {
               </Button>
             </Col>
           </Row>
+          {submitError && (
+            <div className="text-danger mb-3">
+              El producto no se ha guardado, por favor vuelva a intentarlo
+            </div>
+          )}
         </Form>
       )}
     </Container>
