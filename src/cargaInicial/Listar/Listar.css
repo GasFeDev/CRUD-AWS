@@ -1,3 +1,6 @@
+.container {
+  margin-top: 300px;
+}
 td {
     text-align: center;
     vertical-align: middle;
@@ -7,3 +10,59 @@ td {
     text-align: center;
     vertical-align: middle;
   }
+  .container-fluid {
+    max-width: 100%;
+    margin: 0px;
+  }
+
+
+  @media (min-width: 576px) {
+    .container, .container-lg, .container-md, .container-sm, .container-xl {
+      margin-top: 30px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .container, .container-lg, .container-md, .container-sm, .container-xl {
+      margin-top: 30px;
+    }
+
+    .table-mobile {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .table-mobile thead,
+    .table-mobile tbody {
+      grid-column: 1 / 0;
+      padding: 3.5rem 0.5rem;
+      margin: 3.5rem 0.5rem;
+      display: contents;
+      
+    }
+
+    .table-mobile tr {
+      display: grid;
+      grid-template-columns: repeat(1, 1fr);
+    }
+
+    .button-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .button {
+      margin: 0 5px;
+    }
+  }
+  @media (max-width: 450px) {
+
+    .button-container {
+      display: grid;
+      grid-template-columns: repeat(1, 1fr);
+    }
+
+  }
+  
+  

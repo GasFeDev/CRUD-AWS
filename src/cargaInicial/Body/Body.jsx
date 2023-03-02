@@ -18,6 +18,7 @@ const Body = () => {
   const [imgSrc, setImgSrc] = useState(null);
 
   const [, setResponseText] = useState("");
+  const [dataSaved, setDataSaved] = useState(false);
 
   const toggleTab2 = () => {
     setShowTab2(true);
@@ -94,6 +95,7 @@ const Body = () => {
       const data = await response.json();
       const text = JSON.stringify(data);
       setResponseText(text);
+      setDataSaved(true);
       console.log(text);
     } catch (error) {
       console.error(error);
@@ -169,6 +171,12 @@ const Body = () => {
                 onChange={handleUbicacionChange}
               />
             </Form.Group>
+            {dataSaved && (
+              <div className="alert alert-success mt-3">
+                Los datos en Tab2 se han guardado correctamente. Haga clic en
+                Tab1 para finalizar con el proceso de almacenado.
+              </div>
+            )}
           </Form>
         </div>
       ) : (
@@ -222,7 +230,7 @@ const Body = () => {
           <Row className="mt-3">
             <Col>
               <Button variant="outline-primary" onClick={toggleListar}>
-                Listar
+                Listado
               </Button>
             </Col>
             <Col>
