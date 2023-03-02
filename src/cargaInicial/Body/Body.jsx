@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Container, Row, Col, Button, Form, Spinner } from "react-bootstrap";
 import Webcam from "react-webcam";
 import Listar from "../Listar/Listar";
+import swal from "sweetalert";
 import "./Body.css";
 
 const Body = () => {
@@ -21,18 +22,17 @@ const Body = () => {
   const [showConfirmationMessage, setShowConfirmationMessage] = useState(false);
   const [confirmationMessage, setConfirmationMessage] = useState(false);
   const [submitError, setSubmitError] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const handleSaveData = () => {
-    // Verificar si los datos se han guardado correctamente
     if (Cantidad.trim() !== "" && Ubicacion.trim() !== "" && captured) {
-      // Mostrar el mensaje de confirmación
       setShowConfirmationMessage(true);
     }
     if (canSave()) {
       submitMessage();
     }
     if (confirmationMessage) {
-      alert("Su producto ha sido guardado correctamente");
+      swal("Su producto ha sido guardado correctamente");
     }
   };
 
@@ -86,33 +86,32 @@ const Body = () => {
   const handleCantidadChange = (event) => {
     setCantidad(event.target.value);
     if (event.target.value.trim() === "") {
-      setShowConfirmationMessage(false); // Ocultar el mensaje de confirmación
+      setShowConfirmationMessage(false);
     }
     const input = event.target.value;
-    const regex = /^[0-9]*$/; // Expresión regular que solo permite números
+    const regex = /^[0-9]*$/;
 
     if (regex.test(input)) {
-      // Si el valor ingresado es un número
       setCantidad(input);
-      setShowConfirmationMessage(false); // Ocultar el mensaje de confirmación
+      setShowConfirmationMessage(false);
     } else {
-      // Si el valor ingresado no es un número
       setCantidad("");
-      setShowConfirmationMessage(false); // Ocultar el mensaje de confirmación
-      alert("Ingrese un número válido");
+      setShowConfirmationMessage(false);
+      swal("Ingrese un número válido");
     }
   };
 
   const handleUbicacionChange = (event) => {
     setUbicacion(event.target.value);
     if (event.target.value.trim() === "") {
-      setShowConfirmationMessage(false); // Ocultar el mensaje de confirmación
+      setShowConfirmationMessage(false);
     }
   };
 
   async function submitMessage(event) {
     event.preventDefault();
     try {
+      setSubmitting(true);
       const response = await fetch(
         "https://528676oyjb.execute-api.us-east-1.amazonaws.com/prod/sku",
         {
@@ -130,7 +129,8 @@ const Body = () => {
       const data = await response.json();
       const text = JSON.stringify(data);
       setResponseText(text);
-      setShowConfirmationMessage(false); // Ocultar el mensaje de confirmación
+      setShowConfirmationMessage(false);
+      setSubmitting(false);
       setConfirmationMessage(true);
       console.log(text);
     } catch (error) {
@@ -196,7 +196,7 @@ const Body = () => {
                 id="Cantidad"
                 value={Cantidad}
                 onChange={handleCantidadChange}
-                onBlur={handleSaveData} // Llamar a handleSaveData cuando se pierde el foco
+                onBlur={handleSaveData}
               />
             </Form.Group>
             <Form.Group>
@@ -209,7 +209,7 @@ const Body = () => {
                 id="Ubicacion"
                 value={Ubicacion}
                 onChange={handleUbicacionChange}
-                onBlur={handleSaveData} // Llamar a handleSaveData cuando se pierde el foco
+                onBlur={handleSaveData}
               />
             </Form.Group>
             {showConfirmationMessage && (
@@ -260,7 +260,7 @@ const Body = () => {
               <Button
                 variant="primary"
                 size="lg"
-                disabled={!canSave()}
+                disabled={!canSave() || submitting}
                 type="submit"
                 value="Submit"
               >

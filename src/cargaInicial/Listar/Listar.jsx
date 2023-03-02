@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Container, Button, Table } from "react-bootstrap";
 import "./Listar.css";
+import swal from "sweetalert";
 
 const Listar = () => {
   const [, setId] = useState(null);
@@ -15,6 +16,7 @@ const Listar = () => {
   const [editedRows, setEditedRows] = useState([]);
   const [editMode, setEditMode] = useState(false);
   const [, setIsMobileView] = useState(false);
+  const [shouldRefresh, setShouldRefresh] = useState(false);
 
   const handleWindowResize = () => {
     setIsMobileView(window.innerWidth <= 768);
@@ -49,16 +51,17 @@ const Listar = () => {
               }));
             setTableData(tableDataWithId);
             setShowTable(true);
+            setShouldRefresh(false);
           });
         console.log(response);
       } catch (error) {
-        console.log(error);
+        swal(error);
       }
       setLoading(false);
     };
 
     getSkus();
-  }, []);
+  }, [shouldRefresh]);
 
   useEffect(() => {
     localStorage.setItem("hiddenRows", JSON.stringify(hiddenRows));
@@ -67,7 +70,7 @@ const Listar = () => {
   async function handleEditClick(event, id, row) {
     event.preventDefault();
     if (!id) {
-      alert("Debe seleccionar una fila para editar.");
+      swal("Debe seleccionar una fila para editar.");
       return;
     }
 
@@ -96,7 +99,7 @@ const Listar = () => {
         console.log(data);
 
         setEditedRows(editedRows.filter((rowId) => rowId !== id));
-        alert("La fila se ha editado exitosamente");
+        swal("La fila se ha editado exitosamente");
         setEditMode(false);
         setSelectedRowId(null);
       } catch (error) {
@@ -104,16 +107,14 @@ const Listar = () => {
       }
     } else {
       setEditedRows([...editedRows, id]);
-      alert(
-        "Seleccione las celdas que desea editar y luego haga clic en 'Enviar'"
-      );
+      swal("Luego de editar haga clic en 'Enviar'");
     }
   }
 
   async function handleEditCellClick(event, id, column, value) {
     event.preventDefault();
     if (!id) {
-      alert("Debe seleccionar una fila para editar.");
+      swal("Debe seleccionar una fila para editar.");
       return;
     }
 
@@ -150,14 +151,14 @@ const Listar = () => {
       );
       setEditedRows([...editedRows, id]);
     } catch (error) {
-      console.error(error);
+      swal(error);
     }
   }
 
   async function handleDeleteClick(event, productId) {
     event.preventDefault();
     if (!productId) {
-      alert("Debe seleccionar una fila para eliminar.");
+      swal("Debe seleccionar una fila para eliminar.");
       return;
     }
     const confirmed = window.confirm(
@@ -182,7 +183,7 @@ const Listar = () => {
       const data = await response.json();
       console.log(data);
     } catch (error) {
-      console.error(error);
+      swal(error);
     }
   }
 
@@ -190,6 +191,7 @@ const Listar = () => {
     setEditMode(false);
     setSelectedRowId(null);
     setEditedRows([]);
+    setShouldRefresh(true);
   }
 
   const filteredData = selectedRowId
