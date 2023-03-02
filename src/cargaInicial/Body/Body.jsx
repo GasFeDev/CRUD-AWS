@@ -3,6 +3,7 @@ import { Container, Row, Col, Button, Form, Spinner } from "react-bootstrap";
 import Webcam from "react-webcam";
 import Listar from "../Listar/Listar";
 import swal from "sweetalert";
+import Swal from "sweetalert2";
 import "./Body.css";
 
 const Body = () => {
@@ -20,7 +21,6 @@ const Body = () => {
 
   const [, setResponseText] = useState("");
   const [showConfirmationMessage, setShowConfirmationMessage] = useState(false);
-  const [confirmationMessage, setConfirmationMessage] = useState(false);
   const [submitError, setSubmitError] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
@@ -30,9 +30,6 @@ const Body = () => {
     }
     if (canSave()) {
       submitMessage();
-    }
-    if (confirmationMessage) {
-      swal("Su producto ha sido guardado correctamente");
     }
   };
 
@@ -131,7 +128,16 @@ const Body = () => {
       setResponseText(text);
       setShowConfirmationMessage(false);
       setSubmitting(false);
-      setConfirmationMessage(true);
+      Swal.fire({
+        title: "¡Guardado!",
+        text: "Su producto ha sido guardado correctamente",
+        icon: "success",
+        confirmButtonText: "Aceptar",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.reload(); // recargar la página después de hacer clic en "Aceptar"
+        }
+      });
       console.log(text);
     } catch (error) {
       setSubmitError(true);
