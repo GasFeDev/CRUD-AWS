@@ -18,7 +18,15 @@ const Body = () => {
   const [imgSrc, setImgSrc] = useState(null);
 
   const [, setResponseText] = useState("");
-  const [dataSaved, setDataSaved] = useState(false);
+  const [showConfirmationMessage, setShowConfirmationMessage] = useState(false);
+
+  const handleSaveData = () => {
+    // Verificar si los datos se han guardado correctamente
+    if (Cantidad.trim() !== "" && Ubicacion.trim() !== "" && captured) {
+      // Mostrar el mensaje de confirmación
+      setShowConfirmationMessage(true);
+    }
+  };
 
   const toggleTab2 = () => {
     setShowTab2(true);
@@ -69,10 +77,16 @@ const Body = () => {
 
   const handleCantidadChange = (event) => {
     setCantidad(event.target.value);
+    if (event.target.value.trim() === "") {
+      setShowConfirmationMessage(false); // Ocultar el mensaje de confirmación
+    }
   };
 
   const handleUbicacionChange = (event) => {
     setUbicacion(event.target.value);
+    if (event.target.value.trim() === "") {
+      setShowConfirmationMessage(false); // Ocultar el mensaje de confirmación
+    }
   };
 
   async function submitMessage(event) {
@@ -95,7 +109,7 @@ const Body = () => {
       const data = await response.json();
       const text = JSON.stringify(data);
       setResponseText(text);
-      setDataSaved(true);
+      setShowConfirmationMessage(false); // Ocultar el mensaje de confirmación
       console.log(text);
     } catch (error) {
       console.error(error);
@@ -157,6 +171,7 @@ const Body = () => {
                 id="Cantidad"
                 value={Cantidad}
                 onChange={handleCantidadChange}
+                onBlur={handleSaveData} // Llamar a handleSaveData cuando se pierde el foco
               />
             </Form.Group>
             <Form.Group>
@@ -169,11 +184,12 @@ const Body = () => {
                 id="Ubicacion"
                 value={Ubicacion}
                 onChange={handleUbicacionChange}
+                onBlur={handleSaveData} // Llamar a handleSaveData cuando se pierde el foco
               />
             </Form.Group>
-            {dataSaved && (
-              <div className="alert alert-success mt-3">
-                Los datos en Tab2 se han guardado correctamente. Haga clic en
+            {showConfirmationMessage && (
+              <div className="alert alert-success">
+                Los datos en Tab2 se han guardado correctamente, haga click en
                 Tab1 para finalizar con el proceso de almacenado.
               </div>
             )}
