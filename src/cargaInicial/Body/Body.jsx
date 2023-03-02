@@ -80,6 +80,19 @@ const Body = () => {
     if (event.target.value.trim() === "") {
       setShowConfirmationMessage(false); // Ocultar el mensaje de confirmación
     }
+    const input = event.target.value;
+    const regex = /^[0-9]*$/; // Expresión regular que solo permite números
+
+    if (regex.test(input)) {
+      // Si el valor ingresado es un número
+      setCantidad(input);
+      setShowConfirmationMessage(false); // Ocultar el mensaje de confirmación
+    } else {
+      // Si el valor ingresado no es un número
+      setCantidad("");
+      setShowConfirmationMessage(false); // Ocultar el mensaje de confirmación
+      alert("Ingrese un número válido");
+    }
   };
 
   const handleUbicacionChange = (event) => {
@@ -165,7 +178,9 @@ const Body = () => {
               <Form.Control
                 as="textarea"
                 rows={2}
-                type="text"
+                type="number"
+                min="0"
+                step="1"
                 placeholder="Cantidad en almacen"
                 className="textarea"
                 id="Cantidad"
